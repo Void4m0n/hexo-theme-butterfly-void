@@ -9,15 +9,17 @@ if theme.aside.card_recent_post.enable
       - site.posts.sort(sort, -1).limit(postLimit).each(function(article){
         - let link = article.link || article.path
         - let title = article.title || _p('no_title')
-        - let no_cover = article.cover === false || !theme.cover.aside_enable ? 'no-cover' : ''
-        - let post_cover = article.cover
+        - let has_recent_post_cover = article.recent_post_cover !== undefined
+        - let effective_cover = has_recent_post_cover ? article.recent_post_cover : article.cover
+        - let effective_cover_type = has_recent_post_cover ? article.recent_post_cover_type : article.cover_type
+        - let no_cover = effective_cover === false || !theme.cover.aside_enable ? 'no-cover' : ''
         .aside-list-item(class=no_cover)
-          if post_cover && theme.cover.aside_enable
+          if effective_cover && theme.cover.aside_enable
             a.thumbnail(href=url_for(link) title=title)
-              if article.cover_type === 'img'
-                img(src=url_for(post_cover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title)
+              if effective_cover_type === 'img'
+                img(src=url_for(effective_cover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title)
               else
-                div(style=`background: ${post_cover}`)
+                div(style=`background: ${effective_cover}`)
           .content
             a.title(href=url_for(link) title=title)= title
             if theme.aside.card_recent_post.sort === 'updated'
