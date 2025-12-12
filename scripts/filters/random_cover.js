@@ -41,7 +41,11 @@ hexo.extend.generator.register('post', locals => {
   const coverGenerator = createCoverGenerator()
 
   const handleImg = data => {
-    let { cover: coverVal, top_img: topImg, pagination_cover: paginationCover } = data
+    let { cover: coverVal, top_img: topImg, pagination_cover: paginationCover, recent_post_cover: recentPostCover } = data
+
+    if (recentPostCover === '' || recentPostCover === null) {
+      data.recent_post_cover = recentPostCover = false
+    }
 
     // Add path to top_img and cover if post_asset_folder is enabled
     if (postAssetFolder) {
@@ -54,6 +58,13 @@ hexo.extend.generator.register('post', locals => {
       if (paginationCover && paginationCover.indexOf('/') === -1 && imgTestReg.test(paginationCover)) {
         data.pagination_cover = `${data.path}${paginationCover}`
       }
+      if (recentPostCover && recentPostCover.indexOf('/') === -1 && imgTestReg.test(recentPostCover)) {
+        data.recent_post_cover = recentPostCover = `${data.path}${recentPostCover}`
+      }
+    }
+
+    if (recentPostCover && (recentPostCover.indexOf('//') !== -1 || imgTestReg.test(recentPostCover))) {
+      data.recent_post_cover_type = 'img'
     }
 
     if (coverVal === false) return data
