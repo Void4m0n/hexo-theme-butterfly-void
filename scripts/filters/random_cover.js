@@ -79,13 +79,7 @@ hexo.extend.generator.register('post', locals => {
 
   const handleImg = data => {
     data = handleVideo(data)
-    let {
-      cover: coverVal,
-      top_img: topImg,
-      pagination_cover: paginationCover,
-      recent_post_cover: recentPostCover,
-      article_sort_cover: articleSortCover
-    } = data
+    let { cover: coverVal, top_img: topImg, pagination_cover: paginationCover, recent_post_cover: recentPostCover, article_sort_cover: articleSortCover } = data
 
     if (postAssetFolder) {
       if (topImg && topImg.indexOf('/') === -1 && imgTestReg.test(topImg)) {
