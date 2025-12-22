@@ -19,7 +19,7 @@ hexo.extend.helper.register('postDesc', data => {
 
 hexo.extend.helper.register('cloudTags', function (options = {}) {
   const env = this
-  let { source, minfontsize, maxfontsize, limit, unit = 'px', orderby, order, page = 'tags' } = options
+  let { source, minfontsize, maxfontsize, limit, unit = 'px', orderby, order, page = 'tags', colormode, custom_colors } = options
 
   if (limit > 0) {
     source = source.limit(limit)
@@ -36,15 +36,46 @@ hexo.extend.helper.register('cloudTags', function (options = {}) {
     return `rgb(${Math.max(r, 50)}, ${Math.max(g, 50)}, ${Math.max(b, 50)})`
   }
 
-  const generateStyle = (size, unit, page) => {
-    const colorStyle = page === 'tags' ? `background-color: ${getRandomColor()};` : `color: ${getRandomColor()};`
+  const normalizeColors = input => {
+    if (!input) return null
+    if (typeof input === 'string') {
+      const color = input.trim()
+      return color ? [color] : null
+    }
+    if (Array.isArray(input)) {
+      const result = []
+      for (let i = 0; i < input.length; i++) {
+        const value = input[i]
+        if (value === null || value === undefined) continue
+        const color = String(value).trim()
+        if (!color) continue
+        result.push(color)
+      }
+      return result.length ? result : null
+    }
+    return null
+  }
+
+  const userColors = normalizeColors(custom_colors)
+
+  const resolveColor = (idx) => {
+    if (colormode === 'custom' && userColors && userColors.length) {
+      if (userColors.length === 1) return userColors[0]
+      return userColors[idx % userColors.length]
+    }
+    return getRandomColor()
+  }
+
+  const generateStyle = (size, unit, page, color) => {
+    const colorStyle = page === 'tags' ? `background-color: ${color};` : `color: ${color};`
     return `font-size: ${parseFloat(size.toFixed(2))}${unit}; ${colorStyle}`
   }
 
-  return source.sort(orderby, order).map(tag => {
+  return source.sort(orderby, order).map((tag, idx) => {
     const ratio = length ? sizeMap.get(tag.length) / length : 0
     const size = minfontsize + ((maxfontsize - minfontsize) * ratio)
-    const style = generateStyle(size, unit, page)
+    const color = resolveColor(idx)
+    const style = generateStyle(size, unit, page, color)
     return `<a href="${env.url_for(tag.path)}" style="${style}">${tag.name}</a>`
   }).join('')
 })
