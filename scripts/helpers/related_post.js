@@ -29,6 +29,8 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
           path: post.path,
           cover: post.cover,
           cover_type: post.cover_type,
+          cover_mime: post.cover_mime,
+          cover_video_parameters: post.cover_video_parameters,
           weight: 1,
           updated: post.updated,
           created: post.date,
@@ -62,7 +64,7 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
   result += '<div class="relatedPosts-list">'
 
   for (let i = 0; i < Math.min(relatedPostsList.length, limitNum); i++) {
-    let { cover, title, path, cover_type, created, updated, postDesc } = relatedPostsList[i]
+    let { cover, title, path, cover_type, cover_mime, cover_video_parameters, created, updated, postDesc } = relatedPostsList[i]
     const { escape_html, url_for, date } = this
     cover = cover || 'var(--default-bg-color)'
     title = escape_html(title)
@@ -70,6 +72,12 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
     result += `<a class="${className}" href="${url_for(path)}" title="${title}">`
     if (cover_type === 'img') {
       result += `<img class="cover" src="${url_for(cover)}" alt="cover">`
+    } else if (cover_type === 'video') {
+      const cvp = cover_video_parameters || {}
+      const poster = cvp.post_video_cover
+      result += `<video class="cover"${cvp.autoplay ? ' autoplay' : ''}${cvp.loop ? ' loop' : ''} muted playsinline preload="none"${poster ? ` poster="${url_for(poster)}"` : ''}>`
+      result += `<source src="${url_for(cover)}"${cover_mime ? ` type="${cover_mime}"` : ''}>`
+      result += `</video>`
     } else {
       result += `<div class="cover" style="background: ${cover}"></div>`
     }
