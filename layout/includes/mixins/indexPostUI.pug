@@ -14,8 +14,15 @@ mixin indexPostUI()
           if post_cover && theme.cover.index_enable
             .post_cover(class=leftOrRight)
               a(href=url_for(link) title=title)
-                if article.cover_type === 'img'
-                  img.post-bg(src=url_for(post_cover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title)
+                - const eagerCoversCount = theme.LCP_Optimization.enable ? (theme.LCP_Optimization.main_page ?? 3) : 0
+                - const isEager = index < eagerCoversCount
+                - const cover_video_parameters = article.cover_video_parameters || {}
+                - const post_video_cover = cover_video_parameters.post_video_cover
+                if article.cover_type === 'video'
+                  video.post-bg(autoplay=cover_video_parameters.autoplay loop=cover_video_parameters.loop muted playsinline preload=isEager ? 'metadata' : 'none' poster=post_video_cover ? url_for(post_video_cover) : undefined)
+                    source(src=url_for(post_cover) type=article.cover_mime)
+                else if article.cover_type === 'img'
+                  img.post-bg(src=url_for(post_cover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title loading=isEager ? 'eager' : undefined fetchpriority=isEager ? 'high' : undefined decoding=isEager ? undefined : 'async')
                 else
                   div.post-bg(style=`background: ${post_cover}`)
           .recent-post-info(class=no_cover)

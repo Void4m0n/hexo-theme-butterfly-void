@@ -6,6 +6,7 @@
 
 hexo.extend.generator.register('post', locals => {
   const imgTestReg = /\.(png|jpe?g|gif|svg|webp|avif)(\?.*)?$/i
+  const videoTestReg = /\.(mp4|webm)(\?.*)?$/i
   const { post_asset_folder: postAssetFolder } = hexo.config
   const { cover: { default_cover: defaultCover } } = hexo.theme.config
 
@@ -40,48 +41,100 @@ hexo.extend.generator.register('post', locals => {
 
   const coverGenerator = createCoverGenerator()
 
-  const handleImg = data => {
-    let { cover: coverVal, top_img: topImg, pagination_cover: paginationCover, recent_post_cover: recentPostCover } = data
+const handleVideo = data => {
+  let { cover_video_parameters: coverVideoParameters, pagination_video_parameters: paginationVideoParameters } = data
 
-    if (recentPostCover === '' || recentPostCover === null) {
-      data.recent_post_cover = recentPostCover = false
-    }
+  if (!coverVideoParameters || typeof coverVideoParameters !== 'object') coverVideoParameters = {}
+  if (!paginationVideoParameters || typeof paginationVideoParameters !== 'object') paginationVideoParameters = {}
 
-    // Add path to top_img and cover if post_asset_folder is enabled
-    if (postAssetFolder) {
-      if (topImg && topImg.indexOf('/') === -1 && imgTestReg.test(topImg)) {
-        data.top_img = `${data.path}${topImg}`
-      }
-      if (coverVal && coverVal.indexOf('/') === -1 && imgTestReg.test(coverVal)) {
-        data.cover = `${data.path}${coverVal}`
-      }
-      if (paginationCover && paginationCover.indexOf('/') === -1 && imgTestReg.test(paginationCover)) {
-        data.pagination_cover = `${data.path}${paginationCover}`
-      }
-      if (recentPostCover && recentPostCover.indexOf('/') === -1 && imgTestReg.test(recentPostCover)) {
-        data.recent_post_cover = recentPostCover = `${data.path}${recentPostCover}`
-      }
-    }
+  let { post_video_cover: postVideoCover } = coverVideoParameters
 
-    if (recentPostCover && (recentPostCover.indexOf('//') !== -1 || imgTestReg.test(recentPostCover))) {
-      data.recent_post_cover_type = 'img'
-    }
+  if (typeof postVideoCover === 'string') postVideoCover = postVideoCover.trim()
 
-    if (coverVal === false) return data
+  coverVideoParameters.post_video_cover = postVideoCover
+  coverVideoParameters.autoplay = coverVideoParameters.autoplay ?? true
+  coverVideoParameters.loop = coverVideoParameters.loop ?? true
 
-    // If cover is not set, use random cover
-    if (!coverVal) {
-      const randomCover = coverGenerator.next().value
-      data.cover = randomCover
-      coverVal = randomCover
-    }
-
-    if (coverVal && (coverVal.indexOf('//') !== -1 || imgTestReg.test(coverVal))) {
-      data.cover_type = 'img'
-    }
-
-    return data
+  if (postAssetFolder && postVideoCover && postVideoCover.indexOf('/') === -1 && imgTestReg.test(postVideoCover)) {
+    coverVideoParameters.post_video_cover = `${data.path}${postVideoCover}`
   }
+
+  let { pagination_video_poster: paginationVideoPoster } = paginationVideoParameters
+
+  if (typeof paginationVideoPoster === 'string') paginationVideoPoster = paginationVideoPoster.trim()
+
+  paginationVideoParameters.pagination_video_poster = paginationVideoPoster
+  paginationVideoParameters.autoplay = paginationVideoParameters.autoplay ?? true
+  paginationVideoParameters.loop = paginationVideoParameters.loop ?? true
+
+  if (postAssetFolder && paginationVideoPoster && paginationVideoPoster.indexOf('/') === -1 && imgTestReg.test(paginationVideoPoster)) {
+    paginationVideoParameters.pagination_video_poster = `${data.path}${paginationVideoPoster}`
+  }
+
+  data.cover_video_parameters = coverVideoParameters
+  data.pagination_video_parameters = paginationVideoParameters
+
+  return data
+}
+
+const handleImg = data => {
+
+  data = handleVideo(data)
+  let { cover: coverVal, top_img: topImg, pagination_cover: paginationCover, recent_post_cover: recentPostCover, article_sort_cover: articleSortCover } = data
+
+  if (postAssetFolder) {
+    if (topImg && topImg.indexOf('/') === -1 && imgTestReg.test(topImg)) {
+      data.top_img = `${data.path}${topImg}`
+    }
+    if (coverVal && coverVal.indexOf('/') === -1 && (imgTestReg.test(coverVal) || videoTestReg.test(coverVal))) {
+      data.cover = `${data.path}${coverVal}`
+    }
+    if (paginationCover && paginationCover.indexOf('/') === -1 && (imgTestReg.test(paginationCover) || videoTestReg.test(paginationCover))) {
+      data.pagination_cover = `${data.path}${paginationCover}`
+    }
+    if (recentPostCover && recentPostCover.indexOf('/') === -1 && imgTestReg.test(recentPostCover)) {
+      data.recent_post_cover = `${data.path}${recentPostCover}`
+    }
+    if (articleSortCover && articleSortCover.indexOf('/') === -1 && (imgTestReg.test(articleSortCover) || videoTestReg.test(articleSortCover))) {
+      data.article_sort_cover = `${data.path}${articleSortCover}`
+    }
+  }
+
+  if (paginationCover && videoTestReg.test(paginationCover)) {
+    data.pagination_cover_type = 'video'
+    data.pagination_cover_mime = /\.webm(\?.*)?$/i.test(paginationCover) ? 'video/webm' : 'video/mp4'
+  } else if (paginationCover && (paginationCover.indexOf('//') !== -1 || imgTestReg.test(paginationCover))) {
+    data.pagination_cover_type = 'img'
+  }
+
+  if (articleSortCover && videoTestReg.test(articleSortCover)) {
+    data.article_sort_cover_type = 'video'
+    data.article_sort_cover_mime = /\.webm(\?.*)?$/i.test(articleSortCover) ? 'video/webm' : 'video/mp4'
+  } else if (articleSortCover && (articleSortCover.indexOf('//') !== -1 || imgTestReg.test(articleSortCover))) {
+   data.article_sort_cover_type = 'img'
+  }
+
+  if (recentPostCover && (recentPostCover.indexOf('//') !== -1 || imgTestReg.test(recentPostCover))) {
+    data.recent_post_cover_type = 'img'
+  }
+
+  if (coverVal === false) return data
+
+  if (!coverVal) {
+    const randomCover = coverGenerator.next().value
+    data.cover = randomCover
+    coverVal = randomCover
+  }
+
+  if (coverVal && videoTestReg.test(coverVal)) {
+    data.cover_type = 'video'
+    data.cover_mime = /\.webm(\?.*)?$/i.test(coverVal) ? 'video/webm' : 'video/mp4'
+  } else if (coverVal && (coverVal.indexOf('//') !== -1 || imgTestReg.test(coverVal))) {
+    data.cover_type = 'img'
+  }
+
+  return data
+}
 
   const posts = locals.posts.sort('date').toArray()
   const { length } = posts
