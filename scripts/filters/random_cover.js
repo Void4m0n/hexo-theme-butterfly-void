@@ -52,8 +52,8 @@ const handleVideo = data => {
   if (typeof postVideoCover === 'string') postVideoCover = postVideoCover.trim()
 
   coverVideoParameters.post_video_cover = postVideoCover
-  coverVideoParameters.autoplay = coverVideoParameters.autoplay ?? true
-  coverVideoParameters.loop = coverVideoParameters.loop ?? true
+  coverVideoParameters.autoplay = coverVideoParameters.autoplay ?? false
+  coverVideoParameters.loop = coverVideoParameters.loop ?? false
 
   if (postAssetFolder && postVideoCover && postVideoCover.indexOf('/') === -1 && imgTestReg.test(postVideoCover)) {
     coverVideoParameters.post_video_cover = `${data.path}${postVideoCover}`
@@ -64,8 +64,8 @@ const handleVideo = data => {
   if (typeof paginationVideoPoster === 'string') paginationVideoPoster = paginationVideoPoster.trim()
 
   paginationVideoParameters.pagination_video_poster = paginationVideoPoster
-  paginationVideoParameters.autoplay = paginationVideoParameters.autoplay ?? true
-  paginationVideoParameters.loop = paginationVideoParameters.loop ?? true
+  paginationVideoParameters.autoplay = paginationVideoParameters.autoplay ?? false
+  paginationVideoParameters.loop = paginationVideoParameters.loop ?? false
 
   if (postAssetFolder && paginationVideoPoster && paginationVideoPoster.indexOf('/') === -1 && imgTestReg.test(paginationVideoPoster)) {
     paginationVideoParameters.pagination_video_poster = `${data.path}${paginationVideoPoster}`
