@@ -75,7 +75,7 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
     } else if (cover_type === 'video') {
       const cvp = cover_video_parameters || {}
       const poster = cvp.post_video_cover
-      result += `<video class="cover"${cvp.autoplay ? ' autoplay' : ''}${cvp.loop ? ' loop' : ''} muted playsinline preload="none"${poster ? ` poster="${url_for(poster)}"` : ''}>`
+      result += `<video class="cover"${cvp.autoplay ? ' autoplay' : ''}${cvp.loop ? ' loop' : ''} muted playsinline${poster ? ` poster="${url_for(poster)}"` : ''}>`
       result += `<source src="${url_for(cover)}"${cover_mime ? ` type="${cover_mime}"` : ''}>`
       result += `</video>`
     } else {

@@ -27,7 +27,7 @@ if page.total !== 1
             - const loop = pvp.loop ?? cvp.loop
             - const poster = pvp.pagination_video_poster || cvp.post_video_cover
             if coverType === 'video'
-              video.cover(autoplay=autoplay loop=loop muted playsinline preload='none' poster=poster ? url_for(poster) : undefined)
+              video.cover(autoplay=autoplay loop=loop muted playsinline poster=poster ? url_for(poster) : undefined)
                 source(src=url_for(cover) type=coverMime)
             else if coverType === 'img'
               img.cover(src=url_for(cover) onerror=`onerror=null;src='${url_for(theme.error_img.post_page)}'` alt=`cover of ${key === 'prev' ? 'previous' : 'next'} post`)
