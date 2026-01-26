@@ -3,28 +3,28 @@ mixin articleSort(posts)
     - let year
     - posts.forEach((article, index) => {
       - const tempYear = date(article.date, 'YYYY')
-      - const post_cover = article.article_sort_cover === false ? false : (article.article_sort_cover || article.cover)
-      - const noCoverClass = post_cover === false || !theme.cover.archives_enable ? 'no-article-cover' : ''
+      - const postCover = article.article_sort_cover === false ? false : (article.article_sort_cover || article.cover)
+      - const noCoverClass = postCover === false || !theme.cover.archives_enable ? 'no-article-cover' : ''
       - const title = article.title || _p('no_title')
       if tempYear !== year
         - year = tempYear
         .article-sort-item.year= year
       .article-sort-item(class=noCoverClass)
-        if post_cover && theme.cover.archives_enable
+        if postCover && theme.cover.archives_enable
           a.article-sort-item-img(href=url_for(article.path) title=title)
             - const eagerCoversCount = theme.LCP_Optimization.enable ? (theme.LCP_Optimization.articles_sort_page ?? 0) : 0
             - const isEager = index < eagerCoversCount
-            - const post_cover_type = article.article_sort_cover_type || article.cover_type
-            - const post_cover_mime = article.article_sort_cover_mime || article.cover_mime
-            - const cover_video_parameters = article.cover_video_parameters || {}
-            - const post_video_cover = cover_video_parameters.post_video_cover
-            if post_cover_type === 'video'
-              video(autoplay=cover_video_parameters.autoplay loop=cover_video_parameters.loop muted playsinline poster=post_video_cover ? url_for(post_video_cover) : undefined)
-                source(src=url_for(post_cover) type=post_cover_mime)
-            else if post_cover_type === 'img'
-              img(src=url_for(post_cover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title loading=isEager ? 'eager' : undefined fetchpriority=isEager ? 'high' : undefined decoding=isEager ? undefined : 'async')
+            - const postCoverType = article.article_sort_cover_type || article.cover_type
+            - const postCoverMime = article.article_sort_cover_mime || article.cover_mime
+            - const coverVideoParameters = article.cover_video_parameters || {}
+            - const postVideoCover = coverVideoParameters.post_video_cover
+            if postCoverType === 'video'
+              video(autoplay=coverVideoParameters.autoplay loop=coverVideoParameters.loop muted playsinline poster=postVideoCover ? url_for(postVideoCover) : undefined)
+                source(src=url_for(postCover) type=postCoverMime)
+            else if postCoverType === 'img'
+              img(src=url_for(postCover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title loading=isEager ? 'eager' : undefined fetchpriority=isEager ? 'high' : undefined decoding=isEager ? undefined : 'async')
             else
-              div(style=`background: ${post_cover}`)
+              div(style=`background: ${postCover}`)
         .article-sort-item-info
           .article-sort-item-time
             i.far.fa-calendar-alt

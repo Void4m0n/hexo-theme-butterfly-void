@@ -12,14 +12,14 @@ mixin indexPostUI()
           - const noCover = article.cover === false || !theme.cover.index_enable ? 'no-cover' : ''
 
           if postCover && theme.cover.index_enable
-            .postCover(class=leftOrRight)
+            .post_cover(class=leftOrRight)
               a(href=url_for(link) title=title)
                 - const eagerCoversCount = theme.LCP_Optimization.enable ? (theme.LCP_Optimization.main_page ?? 3) : 0
                 - const isEager = index < eagerCoversCount
-                - const cover_video_parameters = article.cover_video_parameters || {}
-                - const post_video_cover = cover_video_parameters.post_video_cover
+                - const coverVideoParameters = article.cover_video_parameters || {}
+                - const postVideoCover = coverVideoParameters.post_video_cover
                 if article.cover_type === 'video'
-                  video.post-bg(autoplay=cover_video_parameters.autoplay loop=cover_video_parameters.loop muted playsinline poster=post_video_cover ? url_for(post_video_cover) : undefined)
+                  video.post-bg(autoplay=coverVideoParameters.autoplay loop=coverVideoParameters.loop muted playsinline poster=postVideoCover ? url_for(postVideoCover) : undefined)
                     source(src=url_for(postCover) type=article.cover_mime)
                 else if article.cover_type === 'img'
                   img.post-bg(src=url_for(postCover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title loading=isEager ? 'eager' : undefined fetchpriority=isEager ? 'high' : undefined decoding=isEager ? undefined : 'async')
