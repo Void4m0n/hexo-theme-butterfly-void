@@ -26,7 +26,7 @@ if page.total !== 1
             - const coverVideoParameters = direction.cover_video_parameters || {}
             - const autoplay = hasPaginationCover ? paginationVideoParameters.autoplay : (paginationVideoParameters.autoplay ?? coverVideoParameters.autoplay)
             - const loop = hasPaginationCover ? paginationVideoParameters.loop : (paginationVideoParameters.loop ?? coverVideoParameters.loop)
-            - const poster = hasPaginationCover ? paginationVideoParameters.pagination_video_poster : (paginationVideoParameters.pagination_video_poster ?? coverVideoParameters.cover_video_poster)
+            - const poster = hasPaginationCover ? paginationVideoParameters.poster : (paginationVideoParameters.poster ?? coverVideoParameters.poster)
 
             if coverType === 'video'
               video.cover(autoplay=autoplay loop=loop muted playsinline poster=poster ? url_for(poster) : undefined)

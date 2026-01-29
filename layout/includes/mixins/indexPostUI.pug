@@ -17,7 +17,7 @@ mixin indexPostUI()
                 - const eagerCoversCount = theme.LCP_Optimization.enable ? (theme.LCP_Optimization.main_page ?? 3) : 0
                 - const isEager = index < eagerCoversCount
                 - const coverVideoParameters = article.cover_video_parameters || {}
-                - const postVideoCover = coverVideoParameters.cover_video_poster
+                - const postVideoCover = coverVideoParameters.poster
                 if article.cover_type === 'video'
                   if isEager && postVideoCover
                     link(rel='preload' as='image' href=url_for(postVideoCover) fetchpriority='high')

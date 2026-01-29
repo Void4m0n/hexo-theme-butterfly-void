@@ -17,7 +17,7 @@ if theme.aside.card_recent_post.enable
         - let coverVideoParameters = article.cover_video_parameters || {}
         - let autoplay = hasRecentPostCover ? recentPostVideoParameters.autoplay : (recentPostVideoParameters.autoplay ?? coverVideoParameters.autoplay)
         - let loop = hasRecentPostCover ? recentPostVideoParameters.loop : (recentPostVideoParameters.loop ?? coverVideoParameters.loop)
-        - let poster = hasRecentPostCover ? recentPostVideoParameters.recent_post_video_poster : (recentPostVideoParameters.recent_post_video_poster ?? coverVideoParameters.cover_video_poster)
+        - let poster = hasRecentPostCover ? recentPostVideoParameters.poster : (recentPostVideoParameters.poster ?? coverVideoParameters.poster)
         - let noCoverClass = cover === false || !theme.cover.aside_enable ? 'no-cover' : ''
         .aside-list-item(class=noCoverClass)
           if cover && theme.cover.aside_enable

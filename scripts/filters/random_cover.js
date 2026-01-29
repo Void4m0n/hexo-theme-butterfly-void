@@ -41,34 +41,31 @@ hexo.extend.generator.register('post', locals => {
 
   const coverGenerator = createCoverGenerator()
 
-  const normalizeVideoParams = (data, paramsKey, posterKey) => {
+  const normalizeVideoParams = (data, paramsKey) => {
     let params = data[paramsKey]
     if (!params || typeof params !== 'object') params = {}
-
-    let poster = params[posterKey]
+  
+    let poster = params.poster
     if (typeof poster === 'string') poster = poster.trim()
-
-    params[posterKey] = poster
-    if (params.autoplay !== undefined && params.autoplay !== null) {
-      params.autoplay = params.autoplay === true
-    }
-    if (params.loop !== undefined && params.loop !== null) {
-      params.loop = params.loop === true
-    }
-
+    if (poster === '') poster = undefined
+  
+    if (params.autoplay !== undefined && params.autoplay !== null) params.autoplay = params.autoplay === true
+    if (params.loop !== undefined && params.loop !== null) params.loop = params.loop === true
+  
     if (postAssetFolder && poster && poster.indexOf('/') === -1 && imgTestReg.test(poster)) {
-      params[posterKey] = `${data.path}${poster}`
+      poster = `${data.path}${poster}`
     }
-
+  
+    params.poster = poster
     data[paramsKey] = params
   }
 
   const handleVideo = data => {
-    normalizeVideoParams(data, 'cover_video_parameters', 'cover_video_poster')
-    normalizeVideoParams(data, 'pagination_video_parameters', 'pagination_video_poster')
-    normalizeVideoParams(data, 'article_sort_video_parameters', 'article_sort_video_poster')
-    normalizeVideoParams(data, 'recent_post_video_parameters', 'recent_post_video_poster')
-    normalizeVideoParams(data, 'related_post_video_parameters', 'related_post_video_poster')
+    normalizeVideoParams(data, 'cover_video_parameters')
+    normalizeVideoParams(data, 'pagination_video_parameters')
+    normalizeVideoParams(data, 'article_sort_video_parameters')
+    normalizeVideoParams(data, 'recent_post_video_parameters')
+    normalizeVideoParams(data, 'related_post_video_parameters')
     return data
   }
 
