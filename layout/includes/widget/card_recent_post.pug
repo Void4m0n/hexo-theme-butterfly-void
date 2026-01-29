@@ -10,16 +10,25 @@ if theme.aside.card_recent_post.enable
         - let link = article.link || article.path
         - let title = article.title || _p('no_title')
         - let hasRecentPostCover = article.recent_post_cover !== undefined
-        - let effectiveCover = hasRecentPostCover ? article.recent_post_cover : article.cover
-        - let effectiveCoverType = hasRecentPostCover ? article.recent_post_cover_type : article.cover_type
-        - let noCoverClass = effectiveCover === false || !theme.cover.aside_enable ? 'no-cover' : ''
+        - let cover = hasRecentPostCover ? article.recent_post_cover : article.cover
+        - let coverType = hasRecentPostCover ? article.recent_post_cover_type : article.cover_type
+        - let coverMime = hasRecentPostCover ? article.recent_post_cover_mime : article.cover_mime
+        - let recentPostVideoParameters = article.recent_post_video_parameters || {}
+        - let coverVideoParameters = article.cover_video_parameters || {}
+        - let autoplay = hasRecentPostCover ? recentPostVideoParameters.autoplay : (recentPostVideoParameters.autoplay ?? coverVideoParameters.autoplay)
+        - let loop = hasRecentPostCover ? recentPostVideoParameters.loop : (recentPostVideoParameters.loop ?? coverVideoParameters.loop)
+        - let poster = hasRecentPostCover ? recentPostVideoParameters.recent_post_video_poster : (recentPostVideoParameters.recent_post_video_poster ?? coverVideoParameters.cover_video_poster)
+        - let noCoverClass = cover === false || !theme.cover.aside_enable ? 'no-cover' : ''
         .aside-list-item(class=noCoverClass)
-          if effectiveCover && theme.cover.aside_enable
+          if cover && theme.cover.aside_enable
             a.thumbnail(href=url_for(link) title=title)
-              if effectiveCoverType === 'img'
-                img(src=url_for(effectiveCover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title)
+              if coverType === 'video'
+                video(autoplay=autoplay loop=loop muted playsinline poster=poster ? url_for(poster) : undefined)
+                  source(src=url_for(cover) type=coverMime || undefined)
+              else if coverType === 'img'
+                img(src=url_for(cover) onerror=`this.onerror=null;this.src='${url_for(theme.error_img.post_page)}'` alt=title)
               else
-                div(style=`background: ${effectiveCover}`)
+                div(style=`background: ${cover}`)
           .content
             a.title(href=url_for(link) title=title)= title
             if theme.aside.card_recent_post.sort === 'updated'

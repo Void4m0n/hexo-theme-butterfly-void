@@ -31,6 +31,10 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
           cover_type: post.cover_type,
           cover_mime: post.cover_mime,
           cover_video_parameters: post.cover_video_parameters,
+          related_post_cover: post.related_post_cover,
+          related_post_cover_type: post.related_post_cover_type,
+          related_post_cover_mime: post.related_post_cover_mime,
+          related_post_video_parameters: post.related_post_video_parameters,
           weight: 1,
           updated: post.updated,
           created: post.date,
@@ -64,19 +68,29 @@ hexo.extend.helper.register('related_posts', function (currentPost) {
   result += '<div class="relatedPosts-list">'
 
   for (let i = 0; i < Math.min(relatedPostsList.length, limitNum); i++) {
-    let { cover, title, path, cover_type, cover_mime, cover_video_parameters, created, updated, postDesc } = relatedPostsList[i]
+    let { title, path, cover: baseCover, cover_type: baseCoverType, cover_mime: baseCoverMime, cover_video_parameters: coverVideoParameters, related_post_cover: relatedPostCover, related_post_cover_type: relatedPostCoverType, related_post_cover_mime: relatedPostCoverMime, related_post_video_parameters: relatedPostVideoParameters, created, updated, postDesc } = relatedPostsList[i]
     const { escape_html, url_for, date } = this
+
+    const hasRelatedPostCover = relatedPostCover !== undefined
+    let cover = hasRelatedPostCover ? relatedPostCover : baseCover
+    const coverType = hasRelatedPostCover ? relatedPostCoverType : baseCoverType
+    const coverMime = hasRelatedPostCover ? relatedPostCoverMime : baseCoverMime
+
+    coverVideoParameters = coverVideoParameters || {}
+    const relatedVideoParameters = relatedPostVideoParameters || {}
+    const autoplay = hasRelatedPostCover ? relatedVideoParameters.autoplay : (relatedVideoParameters.autoplay ?? coverVideoParameters.autoplay)
+    const loop = hasRelatedPostCover ? relatedVideoParameters.loop : (relatedVideoParameters.loop ?? coverVideoParameters.loop)
+    const poster = hasRelatedPostCover ? relatedVideoParameters.related_post_video_poster : (relatedVideoParameters.related_post_video_poster ?? coverVideoParameters.cover_video_poster)
+
     cover = cover || 'var(--default-bg-color)'
     title = escape_html(title)
     const className = postDesc ? 'pagination-related' : 'pagination-related no-desc'
     result += `<a class="${className}" href="${url_for(path)}" title="${title}">`
-    if (cover_type === 'img') {
+    if (coverType === 'img') {
       result += `<img class="cover" src="${url_for(cover)}" alt="cover">`
-    } else if (cover_type === 'video') {
-      const cvp = cover_video_parameters || {}
-      const poster = cvp.post_video_cover
-      result += `<video class="cover"${cvp.autoplay ? ' autoplay' : ''}${cvp.loop ? ' loop' : ''} muted playsinline${poster ? ` poster="${url_for(poster)}"` : ''}>`
-      result += `<source src="${url_for(cover)}"${cover_mime ? ` type="${cover_mime}"` : ''}>`
+    } else if (coverType === 'video') {
+      result += `<video class="cover"${autoplay === true ? ' autoplay' : ''}${loop === true ? ' loop' : ''} muted playsinline${poster ? ` poster="${url_for(poster)}"` : ''}>`
+      result += `<source src="${url_for(cover)}"${coverMime ? ` type="${coverMime}"` : ''}>`
       result += `</video>`
     } else {
       result += `<div class="cover" style="background: ${cover}"></div>`

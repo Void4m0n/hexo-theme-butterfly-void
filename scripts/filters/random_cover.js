@@ -41,45 +41,40 @@ hexo.extend.generator.register('post', locals => {
 
   const coverGenerator = createCoverGenerator()
 
+  const normalizeVideoParams = (data, paramsKey, posterKey) => {
+    let params = data[paramsKey]
+    if (!params || typeof params !== 'object') params = {}
+
+    let poster = params[posterKey]
+    if (typeof poster === 'string') poster = poster.trim()
+
+    params[posterKey] = poster
+    if (params.autoplay !== undefined && params.autoplay !== null) {
+      params.autoplay = params.autoplay === true
+    }
+    if (params.loop !== undefined && params.loop !== null) {
+      params.loop = params.loop === true
+    }
+
+    if (postAssetFolder && poster && poster.indexOf('/') === -1 && imgTestReg.test(poster)) {
+      params[posterKey] = `${data.path}${poster}`
+    }
+
+    data[paramsKey] = params
+  }
+
   const handleVideo = data => {
-    let { cover_video_parameters: coverVideoParameters, pagination_video_parameters: paginationVideoParameters } = data
-
-    if (!coverVideoParameters || typeof coverVideoParameters !== 'object') coverVideoParameters = {}
-    if (!paginationVideoParameters || typeof paginationVideoParameters !== 'object') paginationVideoParameters = {}
-
-    let { post_video_cover: postVideoCover } = coverVideoParameters
-
-    if (typeof postVideoCover === 'string') postVideoCover = postVideoCover.trim()
-
-    coverVideoParameters.post_video_cover = postVideoCover
-    coverVideoParameters.autoplay = coverVideoParameters.autoplay ?? false
-    coverVideoParameters.loop = coverVideoParameters.loop ?? false
-
-    if (postAssetFolder && postVideoCover && postVideoCover.indexOf('/') === -1 && imgTestReg.test(postVideoCover)) {
-      coverVideoParameters.post_video_cover = `${data.path}${postVideoCover}`
-    }
-
-    let { pagination_video_poster: paginationVideoPoster } = paginationVideoParameters
-
-    if (typeof paginationVideoPoster === 'string') paginationVideoPoster = paginationVideoPoster.trim()
-
-    paginationVideoParameters.pagination_video_poster = paginationVideoPoster
-    paginationVideoParameters.autoplay = paginationVideoParameters.autoplay ?? false
-    paginationVideoParameters.loop = paginationVideoParameters.loop ?? false
-
-    if (postAssetFolder && paginationVideoPoster && paginationVideoPoster.indexOf('/') === -1 && imgTestReg.test(paginationVideoPoster)) {
-      paginationVideoParameters.pagination_video_poster = `${data.path}${paginationVideoPoster}`
-    }
-
-    data.cover_video_parameters = coverVideoParameters
-    data.pagination_video_parameters = paginationVideoParameters
-
+    normalizeVideoParams(data, 'cover_video_parameters', 'cover_video_poster')
+    normalizeVideoParams(data, 'pagination_video_parameters', 'pagination_video_poster')
+    normalizeVideoParams(data, 'article_sort_video_parameters', 'article_sort_video_poster')
+    normalizeVideoParams(data, 'recent_post_video_parameters', 'recent_post_video_poster')
+    normalizeVideoParams(data, 'related_post_video_parameters', 'related_post_video_poster')
     return data
   }
 
   const handleImg = data => {
     data = handleVideo(data)
-    let { cover: coverVal, top_img: topImg, pagination_cover: paginationCover, recent_post_cover: recentPostCover, article_sort_cover: articleSortCover } = data
+    let { cover: coverVal, top_img: topImg, pagination_cover: paginationCover, recent_post_cover: recentPostCover, article_sort_cover: articleSortCover, related_post_cover: relatedPostCover } = data
 
     if (postAssetFolder) {
       if (topImg && topImg.indexOf('/') === -1 && imgTestReg.test(topImg)) {
@@ -91,11 +86,14 @@ hexo.extend.generator.register('post', locals => {
       if (paginationCover && paginationCover.indexOf('/') === -1 && (imgTestReg.test(paginationCover) || videoTestReg.test(paginationCover))) {
         data.pagination_cover = `${data.path}${paginationCover}`
       }
-      if (recentPostCover && recentPostCover.indexOf('/') === -1 && imgTestReg.test(recentPostCover)) {
+      if (recentPostCover && recentPostCover.indexOf('/') === -1 && (imgTestReg.test(recentPostCover) || videoTestReg.test(recentPostCover))) {
         data.recent_post_cover = `${data.path}${recentPostCover}`
       }
       if (articleSortCover && articleSortCover.indexOf('/') === -1 && (imgTestReg.test(articleSortCover) || videoTestReg.test(articleSortCover))) {
         data.article_sort_cover = `${data.path}${articleSortCover}`
+      }
+      if (relatedPostCover && relatedPostCover.indexOf('/') === -1 && (imgTestReg.test(relatedPostCover) || videoTestReg.test(relatedPostCover))) {
+        data.related_post_cover = `${data.path}${relatedPostCover}`
       }
     }
 
@@ -106,15 +104,29 @@ hexo.extend.generator.register('post', locals => {
       data.pagination_cover_type = 'img'
     }
 
-    if (articleSortCover && videoTestReg.test(articleSortCover)) {
-      data.article_sort_cover_type = 'video'
-      data.article_sort_cover_mime = /\.webm(\?.*)?$/i.test(articleSortCover) ? 'video/webm' : 'video/mp4'
-    } else if (articleSortCover && (articleSortCover.indexOf('//') !== -1 || imgTestReg.test(articleSortCover))) {
-      data.article_sort_cover_type = 'img'
+    if (articleSortCover !== undefined && articleSortCover !== null && articleSortCover !== false) {
+      if (articleSortCover && videoTestReg.test(articleSortCover)) {
+        data.article_sort_cover_type = 'video'
+        data.article_sort_cover_mime = /\.webm(\?.*)?$/i.test(articleSortCover) ? 'video/webm' : 'video/mp4'
+      } else if (articleSortCover && (articleSortCover.indexOf('//') !== -1 || imgTestReg.test(articleSortCover))) {
+        data.article_sort_cover_type = 'img'
+      }
     }
 
-    if (recentPostCover && (recentPostCover.indexOf('//') !== -1 || imgTestReg.test(recentPostCover))) {
-      data.recent_post_cover_type = 'img'
+    if (recentPostCover !== undefined && recentPostCover !== null && recentPostCover !== false) {
+      if (recentPostCover && videoTestReg.test(recentPostCover)) {
+        data.recent_post_cover_type = 'video'
+        data.recent_post_cover_mime = /\.webm(\?.*)?$/i.test(recentPostCover) ? 'video/webm' : 'video/mp4'
+      } else if (recentPostCover && (recentPostCover.indexOf('//') !== -1 || imgTestReg.test(recentPostCover))) {
+        data.recent_post_cover_type = 'img'
+      }
+    }
+
+    if (relatedPostCover && videoTestReg.test(relatedPostCover)) {
+      data.related_post_cover_type = 'video'
+      data.related_post_cover_mime = /\.webm(\?.*)?$/i.test(relatedPostCover) ? 'video/webm' : 'video/mp4'
+    } else if (relatedPostCover && (relatedPostCover.indexOf('//') !== -1 || imgTestReg.test(relatedPostCover))) {
+      data.related_post_cover_type = 'img'
     }
 
     if (coverVal === false) return data
