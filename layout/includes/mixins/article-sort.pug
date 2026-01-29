@@ -21,7 +21,7 @@ mixin articleSort(posts)
             - const coverVideoParameters = article.cover_video_parameters || {}
             - const autoplay = hasArticleSortCover ? articleSortVideoParameters.autoplay : (articleSortVideoParameters.autoplay ?? coverVideoParameters.autoplay)
             - const loop = hasArticleSortCover ? articleSortVideoParameters.loop : (articleSortVideoParameters.loop ?? coverVideoParameters.loop)
-            - const poster = hasArticleSortCover ? articleSortVideoParameters.article_sort_video_poster : (articleSortVideoParameters.article_sort_video_poster ?? coverVideoParameters.cover_video_poster)
+            - const poster = hasArticleSortCover ? articleSortVideoParameters.poster : (articleSortVideoParameters.poster ?? coverVideoParameters.poster)
             if coverType === 'video'
               video(autoplay=autoplay loop=loop muted playsinline poster=poster ? url_for(poster) : undefined)
                 source(src=url_for(cover) type=coverMime || undefined)
