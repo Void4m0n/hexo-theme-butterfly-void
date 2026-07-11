@@ -1,0 +1,57 @@
+.language-menu
+  summary
+    list-style: none
+
+    &::-webkit-details-marker
+      display: none
+
+  .language-menu-summary
+    border: 0
+    background: none
+    font-family: inherit
+    white-space: nowrap
+
+    & > i:last-child
+      padding: 4px
+      transition: transform .3s
+
+  &[open] > .language-menu-summary > i:last-child
+    transform: rotate(180deg)
+
+  .language-menu-link.is-active
+    color: var(--theme-color) !important
+    font-weight: 700
+
+#nav .language-menu
+  color: var(--light-grey)
+
+  .language-menu-summary
+    color: inherit
+    font-size: .78em
+    text-shadow: 1px 1px 2px rgba($dark-black, .3)
+    cursor: pointer
+
+    &:hover
+      color: var(--white)
+
+  &[open] > .language-menu-list
+    display: block
+
+#page-header.not-top-img #nav .language-menu-summary,
+#page-header.nav-fixed #nav .language-menu-summary
+  color: var(--font-color)
+
+  &:hover
+    color: $light-blue
+
+#sidebar-menus .language-menu
+  .language-menu-summary
+    width: 100%
+    color: var(--font-color)
+    text-align: left
+
+#sidebar #sidebar-menus .menus_items .language-menu[open] > .language-menu-list
+  display: block
+  max-height: 1000px
+  opacity: 1
+  transform: scaleY(1)

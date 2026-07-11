@@ -1,0 +1,127 @@
+footer:
+  framework: Framework
+  theme: Tema
+
+copy:
+  success: Copiado correctamente
+  error: Error al copiar
+  noSupport: Navegador no compatible
+
+page:
+  articles: Todos los artículos
+  tag: Etiqueta
+  category: Categoría
+  archives: Archivos
+  no_posts: Todavía no hay artículos disponibles en este idioma.
+
+language_switcher:
+  label: Elegir idioma
+
+card_post_count: comentarios
+
+no_title: Sin título
+
+post:
+  created: Publicado
+  updated: Actualizado
+  wordcount: Número de palabras
+  min2read: Tiempo de lectura
+  min2read_unit: min
+  page_pv: Visitas
+  comments: Comentarios
+  copyright:
+    author: Autor
+    link: Enlace
+    copyright_notice: Aviso de copyright
+    copyright_content: 'Salvo que se indique lo contrario, los artículos de este blog se publican bajo la licencia <a href="%s">%s</a>.'
+  recommend: Artículos relacionados
+  edit: Editar
+  back_to_home: Volver al inicio
+
+search:
+  title: Buscar
+  load_data: Cargando base de datos
+  input_placeholder: Buscar artículos
+  algolia_search:
+    hits_empty: 'No se encontraron resultados para: ${query}'
+    hits_stats: '${hits} resultados encontrados en ${time} ms'
+  local_search:
+    hits_empty: 'No se encontraron resultados para: ${query}'
+    hits_stats: '${hits} artículos encontrados'
+
+pagination:
+  prev: Anterior
+  next: Siguiente
+  page_info: 'Página ${current} de ${total}'
+
+comment: Comentarios
+
+aside:
+  articles: Artículos
+  tags: Etiquetas
+  categories: Categorías
+  card_announcement: Anuncio
+  card_categories: Categorías
+  card_tags: Etiquetas
+  card_archives: Archivos
+  card_recent_post: Artículos recientes
+  card_webinfo:
+    headline: Información del sitio
+    article_name: Número de artículos
+    runtime:
+      name: Tiempo online
+      unit: días
+    last_push_date:
+      name: Última actualización
+    site_wordcount: Total de palabras
+    site_uv_name: Visitantes únicos
+    site_pv_name: Visitas de página
+  more_button: Ver más
+  card_newest_comments:
+    headline: Últimos comentarios
+    loading_text: Cargando...
+    error: No se han podido recuperar los comentarios
+    zero: Sin comentarios
+    image: Imagen
+    link: Enlace
+    code: Código
+  card_toc: Contenido
+  card_post_series: Serie de artículos
+
+date_suffix:
+  just: Ahora mismo
+  min: minutos atrás
+  hour: horas atrás
+  day: días atrás
+  month: meses atrás
+
+donate: Patrocinar
+share: Compartir
+
+rightside:
+  readmode_title: Modo lectura
+  translate_title: Cambiar entre chino tradicional y simplificado
+  night_mode_title: Cambiar entre modo claro y oscuro
+  back_to_top: Volver arriba
+  toc: Tabla de contenidos
+  scroll_to_comment: Ir a los comentarios
+  setting: Ajustes
+  aside: Cambiar entre una y dos columnas
+  chat: Chat
+
+copy_copyright:
+  author: Autor
+  link: Enlace
+  source: Fuente
+  info: El copyright pertenece al autor. Para usos comerciales, contacta con el autor. Para usos no comerciales, indica la fuente.
+
+Snackbar:
+  chs_to_cht: Has cambiado a chino tradicional
+  cht_to_chs: Has cambiado a chino simplificado
+  day_to_night: Has activado el modo oscuro
+  night_to_day: Has activado el modo claro
+
+loading: Cargando...
+load_more: Cargar más
+
+error404: Página no encontrada

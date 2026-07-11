@@ -1,0 +1,4 @@
+- const languageLinks = multilingual_page_links(page, pageType)
+if languageLinks.alternates
+  each alternate in languageLinks.alternates
+    link(rel='alternate' hreflang=alternate.language href=alternate.href)

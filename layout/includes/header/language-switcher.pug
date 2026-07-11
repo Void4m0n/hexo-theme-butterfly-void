@@ -1,0 +1,11 @@
+- const languageLinks = multilingual_page_links(page, pageType)
+.menus_items.language-switcher-items
+  details.menus_item.language-menu(class=`language-menu-${location || 'desktop'}`)
+    summary.site-page.language-menu-summary(aria-label=theme.language_switcher.label title=theme.language_switcher.label)
+      i.fa-fw(class=theme.language_switcher.icon || 'fas fa-language' aria-hidden='true')
+      span= ' ' + languageLinks.currentShortLabel
+      i.fas.fa-chevron-down(aria-hidden='true')
+    ul.menus_item_child.language-menu-list
+      each item in languageLinks.items
+        li
+          a.site-page.child.language-menu-link(href=item.href lang=item.language hreflang=item.language aria-current=item.active ? 'page' : undefined class=item.active ? 'is-active' : undefined)= item.label

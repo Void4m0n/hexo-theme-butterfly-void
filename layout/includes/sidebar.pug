@@ -16,3 +16,5 @@ if theme.menu
           .length-num= site.categories.length
 
       != partial('includes/header/menu_item', {}, { cache: true })
+      if theme.language_switcher && theme.language_switcher.enable
+        != partial('includes/header/language-switcher', { location: 'mobile', pageType: currentPageType }, { cache: false })

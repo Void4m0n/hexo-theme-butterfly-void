@@ -20,6 +20,8 @@ nav#nav
           span= ' ' + _p('search.title')
     if theme.menu
       != partial('includes/header/menu_item', {}, {cache: true})
+      if theme.language_switcher && theme.language_switcher.enable
+        != partial('includes/header/language-switcher', { location: 'desktop', pageType: globalPageType }, { cache: false })
 
       #toggle-menu
         span.site-page
