@@ -56,9 +56,16 @@ function homeRoute (language) {
   return mount ? `/${mount}/` : '/'
 }
 
-function archivesRoute (language, archiveDir) {
-  const directory = String(archiveDir || 'archives').replace(/^\/+|\/+$/g, '')
-  return `${homeRoute(language)}${directory}/`.replace(/\/{2,}/g, '/')
+function languageRoute (route, currentLanguage, targetLanguage) {
+  const currentHome = homeRoute(currentLanguage)
+  const targetHome = homeRoute(targetLanguage)
+  const relativeRoute = currentHome === '/'
+    ? route.startsWith('/') && route.slice(1)
+    : route.startsWith(currentHome) && route.slice(currentHome.length)
+
+  return typeof relativeRoute === 'string'
+    ? `${targetHome}${relativeRoute}`.replace(/\/{2,}/g, '/')
+    : null
 }
 
 function isNoindex (page) {
@@ -70,19 +77,24 @@ hexo.extend.helper.register('multilingual_page_links', function (page, pageType)
   const currentLang = getLanguage(config.language)
   const currentLanguage = getLanguageConfig(currentLang)
   const currentUrl = currentCanonical(this, config)
-  const paginated = Number(page.current || 1) > 1
   const notFound = pageType === '404' || page.type === '404'
-  const datedArchive = pageType === 'archive' && Boolean(page.year || page.month)
-  const eligible = !notFound && !paginated && !datedArchive && !isNoindex(page)
+  const eligible = !notFound && !isNoindex(page)
+  const contextualPage = ['home', 'archive', 'category', 'tag'].includes(pageType)
+  const contextualUrls = new Map([[currentLang, currentUrl]])
   const exactUrls = new Map([[currentLang, currentUrl]])
 
-  if (eligible && pageType === 'home') {
+  if (contextualPage) {
+    const currentRoute = navigationPath(currentUrl, homeRoute(currentLang))
     languages.forEach(language => {
-      exactUrls.set(language.code, canonicalRoute(homeRoute(language.code), config))
+      const route = languageRoute(currentRoute, currentLang, language.code)
+      const counterpart = route && canonicalRoute(route, config)
+      if (counterpart) contextualUrls.set(language.code, counterpart)
     })
-  } else if (eligible && pageType === 'archive') {
-    languages.forEach(language => {
-      exactUrls.set(language.code, canonicalRoute(archivesRoute(language.code, config.archive_dir), config))
+  }
+
+  if (eligible && contextualPage) {
+    contextualUrls.forEach((url, language) => {
+      exactUrls.set(language, url)
     })
   } else if (eligible && page.translations && typeof page.translations === 'object') {
     Object.entries(page.translations).forEach(([language, route]) => {
@@ -92,13 +104,15 @@ hexo.extend.helper.register('multilingual_page_links', function (page, pageType)
     })
   }
 
+  const navigationUrls = contextualPage ? contextualUrls : new Map(exactUrls)
+
   const exact = exactUrls.size > 1
   const items = languages.map(language => ({
     language: language.code,
     label: language.label,
     active: language.code === currentLang,
     href: navigationPath(
-      exactUrls.get(language.code) || canonicalRoute(homeRoute(language.code), config),
+      navigationUrls.get(language.code) || canonicalRoute(homeRoute(language.code), config),
       homeRoute(language.code)
     )
   }))
