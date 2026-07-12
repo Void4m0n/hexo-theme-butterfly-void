@@ -37,10 +37,7 @@ html(lang=config.language data-theme=theme.display_mode class=htmlClassHideAside
             document.addEventListener('DOMContentLoaded', setRandomBg)
           })()
 
-    if theme.language_switcher && theme.language_switcher.enable
-      !=partial('includes/sidebar', { currentPageType: globalPageType }, { cache: false })
-    else
-      !=partial('includes/sidebar', {}, {cache: true})
+    !=partial('includes/sidebar', {}, {cache: true})
 
     #body-wrap(class=pageType)
       include ./header/index.pug

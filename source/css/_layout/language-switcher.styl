@@ -37,21 +37,12 @@
   &[open] > .language-menu-list
     display: block
 
+#nav.hide-menu .menus_items.language-switcher-items
+  display: inline
+
 #page-header.not-top-img #nav .language-menu-summary,
 #page-header.nav-fixed #nav .language-menu-summary
   color: var(--font-color)
 
   &:hover
     color: $light-blue
-
-#sidebar-menus .language-menu
-  .language-menu-summary
-    width: 100%
-    color: var(--font-color)
-    text-align: left
-
-#sidebar #sidebar-menus .menus_items .language-menu[open] > .language-menu-list
-  display: block
-  max-height: 1000px
-  opacity: 1
-  transform: scaleY(1)
