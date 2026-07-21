@@ -17,6 +17,15 @@ function getOrigin (config) {
   return new URL(config.url).origin
 }
 
+function applyTrailingIndex (url, config) {
+  if (config.pretty_urls?.trailing_index === false) {
+    url.pathname = url.pathname.replace(/\/index\.html$/, '/')
+  } else if (url.pathname.endsWith('/')) {
+    url.pathname += 'index.html'
+  }
+  return url.href
+}
+
 function canonicalRoute (route, config) {
   if (typeof route !== 'string' || !route.startsWith('/') || route.startsWith('//') || /[?#]/.test(route)) return null
 
@@ -24,8 +33,7 @@ function canonicalRoute (route, config) {
     const origin = getOrigin(config)
     const url = new URL(route, `${origin}/`)
     if (url.origin !== origin) return null
-    if (config.pretty_urls?.trailing_index !== false && url.pathname.endsWith('/')) url.pathname += 'index.html'
-    return url.href
+    return applyTrailingIndex(url, config)
   } catch {
     return null
   }
@@ -35,8 +43,7 @@ function currentCanonical (context, config) {
   try {
     const origin = getOrigin(config)
     const url = new URL(context.url || '/', `${origin}/`)
-    if (config.pretty_urls?.trailing_index !== false && url.pathname.endsWith('/')) url.pathname += 'index.html'
-    return url.href
+    return applyTrailingIndex(url, config)
   } catch {
     return config.url
   }
